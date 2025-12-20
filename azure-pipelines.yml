@@ -1,0 +1,50 @@
+trigger: none
+pool: mayapool
+
+variables: 
+- name: WORKDIR
+  value: $(System.DefaultWorkingDirectory)/environments/dev
+
+stages:
+  - stage: TerraformInfra
+    jobs:
+      - job: 
+        steps:
+
+        - task: TerraformInstaller@1
+          inputs:
+            terraformVersion: 'latest'
+        - task: TerraformTask@5
+          displayName: TerraformInit
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: $(WORKDIR)
+            backendServiceArm: 'ServiceCon1'
+            backendAzureRmResourceGroupName: 'RG02'
+            backendAzureRmStorageAccountName: 'bajranbalistorage'
+            backendAzureRmContainerName: 'container'
+            backendAzureRmKey: 'elm.tfstate'
+        - task: TerraformTask@5
+          displayName: Terraformvalidate
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+            workingDirectory: $(WORKDIR)
+
+        - task: TerraformTask@5
+          displayName: Terraformplan
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: $(WORKDIR)
+            environmentServiceNameAzureRM: 'ServiceCon1'
+        
+  - stage: TerraformsScanning 
+    jobs:
+      - job: 
+        steps:
+        - task: tfsec@1
+          inputs:
+            version: 'v1.26.0'
+            dir: $(WORKDIR)
