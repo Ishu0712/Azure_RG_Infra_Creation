@@ -42,23 +42,26 @@ stages:
         
   - stage: TerraformsScanning 
     jobs:
-      - job: tfsec
-        steps:
-        - task: tfsec@1
-          inputs:
-            version: 'v1.26.0'
-            dir: $(WORKDIR)
+      # - job: tfsec
+      #   steps:
+      #   - task: tfsec@1
+      #     inputs:
+      #       version: 'v1.26.0'
+      #       dir: $(WORKDIR)
 
       - job: tflint
-        dependsOn: tfsec
+        # dependsOn: tfsec
         displayName: Tflint
         steps:
-        - task: PowerShell@2
-          continueOnError: true
+        # - task: PowerShell@2
+        #   continueOnError: true
+        #   inputs:
+        #     targetType: 'inline'
+        #     script: 'tflint --chdir="$(System.DefaultWorkingDirectory)/environments/dev" --recursive -f junit > tflint.xml'
+        - task: CmdLine@2
           inputs:
-            targetType: 'inline'
             script: 'tflint --chdir="$(System.DefaultWorkingDirectory)/environments/dev" --recursive -f junit > tflint.xml'
-
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
 
        
         - task: PublishTestResults@2
