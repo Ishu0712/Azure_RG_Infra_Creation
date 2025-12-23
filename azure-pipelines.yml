@@ -57,7 +57,7 @@ stages:
           continueOnError: true
           inputs:
             targetType: 'inline'
-            script: 'tflint --chdir="$(System.DefaultWorkingDirectory)" --recursive -f junit > tflint.xml'
+            script: 'tflint --chdir="$(System.DefaultWorkingDirectory)/environments/dev" --recursive -f junit > tflint.xml'
 
 
        
