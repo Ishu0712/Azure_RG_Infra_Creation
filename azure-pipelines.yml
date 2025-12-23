@@ -61,12 +61,12 @@ stages:
         - task: CmdLine@2
           continueOnError: true
           inputs:
-            script: 'tflint --chdir="$(System.DefaultWorkingDirectory)/environments/dev" --recursive -f junit > tflint.xml'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
+            script: 'tflint --chdir="$(System.DefaultWorkingDirectory)" --recursive -f junit > tflinresult.xml'
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
 
        
         - task: PublishTestResults@2
           inputs:
             testResultsFormat: 'JUnit'
-            testResultsFiles: 'tflint.xml'
+            testResultsFiles: 'tflinresult.xml'
             testRunTitle: 'tflintresult'
