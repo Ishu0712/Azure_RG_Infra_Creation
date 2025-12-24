@@ -6,67 +6,77 @@ variables:
   value: $(System.DefaultWorkingDirectory)/environments/dev
 
 stages:
-  # - stage: TerraformInfra
-  #   jobs:
-  #     - job: 
-  #       steps:
+  - stage: TerraformInfra
+    jobs:
+      - job: 
+        steps:
 
-  #       - task: TerraformInstaller@1
-  #         inputs:
-  #           terraformVersion: 'latest'
-  #       - task: TerraformTask@5
-  #         displayName: TerraformInit
-  #         inputs:
-  #           provider: 'azurerm'
-  #           command: 'init'
-  #           workingDirectory: $(WORKDIR)
-  #           backendServiceArm: 'ServiceCon1'
-  #           backendAzureRmResourceGroupName: 'RG02'
-  #           backendAzureRmStorageAccountName: 'bajranbalistorage'
-  #           backendAzureRmContainerName: 'container'
-  #           backendAzureRmKey: 'elm.tfstate'
-  #       - task: TerraformTask@5
-  #         displayName: Terraformvalidate
-  #         inputs:
-  #           provider: 'azurerm'
-  #           command: 'validate'
-  #           workingDirectory: $(WORKDIR)
+        - task: TerraformInstaller@1
+          inputs:
+            terraformVersion: 'latest'
+        - task: TerraformTask@5
+          displayName: TerraformInit
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: $(WORKDIR)
+            backendServiceArm: 'ServiceCon1'
+            backendAzureRmResourceGroupName: 'RG02'
+            backendAzureRmStorageAccountName: 'bajranbalistorage'
+            backendAzureRmContainerName: 'container'
+            backendAzureRmKey: 'elm.tfstate'
+        - task: TerraformTask@5
+          displayName: Terraformvalidate
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+            workingDirectory: $(WORKDIR)
 
-  #       - task: TerraformTask@5
-  #         displayName: Terraformplan
-  #         inputs:
-  #           provider: 'azurerm'
-  #           command: 'plan'
-  #           workingDirectory: $(WORKDIR)
-  #           environmentServiceNameAzureRM: 'ServiceCon1'
+        - task: TerraformTask@5
+          displayName: Terraformplan
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: $(WORKDIR)
+            environmentServiceNameAzureRM: 'ServiceCon1'
         
   - stage: TerraformsScanning 
     jobs:
-      # - job: tfsec
-      #   steps:
-      #   - task: tfsec@1
-      #     inputs:
-      #       version: 'v1.26.0'
-      #       dir: $(WORKDIR)
-
-      - job: tflint
-        # dependsOn: tfsec
-        displayName: Tflint
+      - job: tfsec
         steps:
-        # - task: PowerShell@2
-        #   continueOnError: true
-        #   inputs:
-        #     targetType: 'inline'
-        #     script: 'tflint --chdir="$(System.DefaultWorkingDirectory)/environments/dev" --recursive -f junit > tflint.xml'
-        - task: CmdLine@2
-          continueOnError: true
+        - task: tfsec@1
           inputs:
-            script: 'tflint --chdir="$(System.DefaultWorkingDirectory)" --recursive -f junit > tflinresult.xml'
-            workingDirectory: '$(System.DefaultWorkingDirectory)'
+            version: 'v1.26.0'
+            dir: $(WORKDIR)
 
-       
-        - task: PublishTestResults@2
+      # - job: tflint
+      #   # dependsOn: tfsec
+      #   displayName: Tflint
+      #   steps:
+      #   # - task: PowerShell@2
+      #   #   continueOnError: true
+      #   #   inputs:
+      #   #     targetType: 'inline'
+      #   #     script: 'tflint --chdir="$(System.DefaultWorkingDirectory)/environments/dev" --recursive -f junit > tflint.xml'
+      #   - task: CmdLine@2
+      #     continueOnError: true
+      #     inputs:
+      #       script: 'tflint --chdir="$(System.DefaultWorkingDirectory)" --recursive -f junit > tflinresult.xml'
+      #       workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+      #   - task: PublishTestResults@2
+      #     inputs:
+      #       testResultsFormat: 'JUnit'
+      #       testResultsFiles: 'tflinresult.xml'
+      #       testRunTitle: 'tflintresult'
+  - stage: infracostcalculate
+    dependsOn: Terraforminfra
+    jobs:
+      - job: Infra_cost
+        displayName: Infra Cost estimate
+        steps:
+        - task: PowerShell@2
           inputs:
-            testResultsFormat: 'JUnit'
-            testResultsFiles: 'tflinresult.xml'
-            testRunTitle: 'tflintresult'
+            targetType: 'inline'
+            script: 'infracost breakdown --path = .'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
