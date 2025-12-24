@@ -78,5 +78,5 @@ stages:
         - task: PowerShell@2
           inputs:
             targetType: 'inline'
-            script: 'infracost breakdown --path = .'
+            script: 'infracost breakdown --path .'
             workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
