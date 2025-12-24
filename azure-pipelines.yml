@@ -79,4 +79,4 @@ stages:
           inputs:
             targetType: 'inline'
             script: 'infracost breakdown --path .'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
