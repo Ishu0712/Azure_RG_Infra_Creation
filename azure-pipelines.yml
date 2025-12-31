@@ -77,7 +77,7 @@ stages:
         steps:
         - task: CmdLine@2
           inputs:
-            script: 'infracost breakdown --path . --format=html > cost-out.html'
+            script: 'infracost breakdown --path $(System.DefaultWorkingDirectory) --format=html > cost-out.html'
             workingDirectory: '$(System.DefaultWorkingDirectory)'
         
         # steps:
