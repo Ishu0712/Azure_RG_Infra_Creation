@@ -78,7 +78,7 @@ stages:
         - task: CmdLine@2
           inputs:
             script: 'infracost breakdown --path . --format=html > cost-out.html'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/modules'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
         
         # steps:
         # - task: PowerShell@2
