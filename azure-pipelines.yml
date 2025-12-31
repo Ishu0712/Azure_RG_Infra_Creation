@@ -74,17 +74,17 @@ stages:
     jobs:
       - job: Infra_cost
         displayName: Infra Cost estimate
-        steps:
-        - task: CmdLine@2
-          inputs:
-            script: 'infracost breakdown --path $(WORKDIR) --format=html > cost-out.html'
-            workingDirectory: '$(System.DefaultWorkingDirectory)'
-        
         # steps:
-        # - task: PowerShell@2
+        # - task: CmdLine@2
         #   inputs:
-        #     targetType: 'inline'
-        #     script: 'infracost breakdown --path $(System.DefaultWorkingDirectory)' 
+        #     script: 'infracost breakdown --path $(WORKDIR) --format=html > cost-out.html'
         #     workingDirectory: '$(System.DefaultWorkingDirectory)'
+        
+        steps:
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: 'infracost breakdown --path "$(System.DefaultWorkingDirectory)"' 
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
         
 
