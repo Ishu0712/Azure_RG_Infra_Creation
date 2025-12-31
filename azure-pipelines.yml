@@ -84,7 +84,7 @@ stages:
         - task: PowerShell@2
           inputs:
             targetType: 'inline'
-            script: infracost breakdown --path "$(System.DefaultWorkingDirectory)" --format=html > costdetails.html
+            script: infracost breakdown --path "$(System.DefaultWorkingDirectory)/environments/dev" --format=html > costdetails.html
             workingDirectory: '$(System.DefaultWorkingDirectory)'
         
 
